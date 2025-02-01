@@ -35,10 +35,8 @@ defmodule GeenowWeb.AuthController do
         |> put_status(:ok)
         |> json(%{
           token: token,
-          user: %{
-            id: user.id,
-            email: user.email
-          }
+          id: user.id,
+          email: user.email
         })
 
       {:error, :not_found} ->

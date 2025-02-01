@@ -44,4 +44,8 @@ defmodule GeenowWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug GeenowWeb.Router
+
+  socket "/socket", GeenowWeb.UserSocket,
+    websocket: true,
+    longpoll: false
 end

@@ -13,6 +13,7 @@ defmodule GeenowWeb.AuthControllerTest do
     email: "geenow@gmail.com",
     password: "mamminabella"
   }
+
   @invalid_signin_attrs %{
     email: "invalid_email",
     password: "short"
@@ -43,23 +44,24 @@ defmodule GeenowWeb.AuthControllerTest do
     #    end
   end
 
-  #  describe "signin" do
-  #    setup %{conn: conn} do
-  #      {:ok, user} = Accounts.create_user(@valid_attrs)
-  #      {:ok, conn: conn, user: user}
-  #    end
-  #
-  #    test "renders token when credentials are valid", %{conn: conn} do
-  #      conn =
-  #        post(conn, ~p"/auth/signin", %{
-  #          email: @valid_attrs.email,
-  #          password: @valid_attrs.password
-  #        })
-  #
-  #      assert %{"status" => "success"} = json_response(conn, :ok)
-  #      assert %{"token" => _token} = json_response(conn, :ok)["data"]
-  #      assert %{"user" => %{"email" => "test@example.com"}} = json_response(conn, :ok)["data"]
-  #    end
+  describe "signin" do
+    setup %{conn: conn} do
+      {:ok, user} = Accounts.create_user(@valid_signup_attrs)
+      {:ok, conn: conn, user: user}
+    end
+
+    test "renders token when credentials are valid", %{conn: conn} do
+      conn =
+        post(conn, ~p"/auth/signin", %{
+          email: @valid_signin_attrs.email,
+          password: @valid_signin_attrs.password
+        })
+
+      assert %{"token" => _token} = json_response(conn, :ok)
+      assert %{"email" => "geenow@gmail.com"} = json_response(conn, :ok)
+    end
+  end
+
   #
   #    test "renders error when email is invalid", %{conn: conn} do
   #      conn =

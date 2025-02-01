@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Game Client</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phoenix/1.7.10/phoenix.min.js"></script>
+    <style>
+        .log {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            height: 200px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>Phoenix Game Client</h2>
+        <input type="text" id="token" placeholder="Enter your auth token" value="your_test_token">
+        <button onclick="connect()">Connect</button>
+        <button onclick="disconnect()">Disconnect</button>
+    </div>
+
+    <div>
+        <h3>Join Game</h3>
+        <button onclick="joinWorld()">Join Game World</button>
+        <input type="text" id="instanceId" placeholder="Instance ID">
+        <button onclick="joinInstance()">Join Instance</button>
+    </div>
+
+       <script>
+        let socket;
+        let channel;
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `<div>${new Date().toISOString()} - ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function connect() {
+            const token = document.getElementById('token').value;
+            
+            // Initialize Socket connection
+            socket = new Phoenix.Socket("/socket", {
+                params: { token: token }
+            });
+
+            // Handle socket events
+            socket.onOpen(() => log("Socket connection opened"));
+            socket.onError(() => log("Socket connection error"));
+            socket.onClose(() => log("Socket connection closed"));
+
+            socket.connect();
+            log("Attempting to connect...");
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.disconnect();
+                log("Disconnected from socket");
+            }
+        }
+
+        function joinWorld() {
+            if (!socket) {
+                log("Please connect first");
+                return;
+            }
+
+            // Join the game world channel
+            channel = socket.channel("game:world");
+
+            channel.join()
+                .receive("ok", resp => log("Joined game world successfully"))
+                .receive("error", resp => log("Failed to join game world"));
+
+            // Listen for various game events
+            channel.on("player_moved", payload => {
+                log(`Player ${payload.player_id} moved to (${payload.x}, ${payload.y})`);
+            });
+        }
+
+        function joinInstance() {
+            if (!socket) {
+                log("Please connect first");
+                return;
+            }
+
+            const instanceId = document.getElementById('instanceId').value;
+            if (!instanceId) {
+                log("Please enter an instance ID");
+                return;
+            }
+
+            // Leave current channel if exists
+            if (channel) {
+                channel.leave();
+            }
+
+            // Join the specific game instance channel
+            channel = socket.channel(`game:instance:${instanceId}`);
+
+            channel.join()
+                .receive("ok", resp => log(`Joined instance ${instanceId} successfully`))
+                .receive("error", resp => log(`Failed to join instance ${instanceId}`));
+
+            // Listen for various game events
+            channel.on("player_moved", payload => {
+                log(`Player ${payload.player_id} moved to (${payload.x}, ${payload.y})`);
+            });
+        }
+
+          </script>
+</body>
+</html>

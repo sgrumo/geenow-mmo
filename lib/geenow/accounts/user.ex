@@ -26,9 +26,9 @@ defmodule Geenow.Accounts.User do
   end
 
   defp put_password_hash(
-         %Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset
+         %Ecto.Changeset{valid?: true, changes: %{password_hash: password_hash}} = changeset
        ) do
-    change(changeset, password_hash: Bcrypt.hash_pwd_salt(password))
+    change(changeset, password_hash: Bcrypt.hash_pwd_salt(password_hash))
   end
 
   defp put_password_hash(changeset), do: changeset
