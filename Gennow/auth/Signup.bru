@@ -1,0 +1,19 @@
+meta {
+  name: Signup
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/signup
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "samuele.medici2@gmail.com",
+    "password_hash": "ciaomammina",
+    "username": "bappo"
+  }
+}
