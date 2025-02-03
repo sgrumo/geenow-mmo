@@ -14,7 +14,7 @@ defmodule Geenow.Auth.Guardian do
   end
 
   def resource_from_claims(%{"sub" => id}) do
-    case Geenow.Accounts.get_user(id) do
+    case Geenow.Accounts.get_user!(id) do
       {:ok, user} -> {:ok, user}
       _ -> {:error, :resource_not_found}
     end
