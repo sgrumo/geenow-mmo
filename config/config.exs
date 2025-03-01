@@ -19,6 +19,7 @@ config :geenow, GeenowWeb.Endpoint,
     formats: [json: GeenowWeb.ErrorJSON],
     layout: false
   ],
+  check_origin: false,
   pubsub_server: Geenow.PubSub,
   live_view: [signing_salt: "V3w6IClK"]
 
